@@ -11,18 +11,25 @@ public class Weapon : MonoBehaviour {
 
     public GameObject laser;
     public GameObject boid;
+    public GameObject weapon;
+    public GameObject hud;
 
     public TextMeshPro killsText;
     public TextMeshPro cooldownText;
 
+    public AudioClip pew;
+
+    public Animator anim;
+
     private float cooldownTimer;
     private bool shoot;
     private bool cd;
-
     private bool controlModeOn;
+    private AudioSource ac;
 
-    public GameObject weapon;
-    public GameObject hud;
+    private void Start() {
+        ac = GetComponent<AudioSource>();
+    }
 
     private void FixedUpdate() {
 
@@ -39,12 +46,14 @@ public class Weapon : MonoBehaviour {
 
         if (Input.GetMouseButtonDown(0)) {
             if (!cd) {
+                ac.PlayOneShot(pew);
+                anim.SetTrigger("Zap");
                 shoot = true;
             }
         }
 
         if (Input.GetMouseButtonDown(1)) {
-            Instantiate(boid, laser.transform.position + transform.forward*5f, transform.rotation);
+            Instantiate(boid, laser.transform.position + transform.forward*25f, transform.rotation);
         }
 
         if (shoot) {
@@ -60,12 +69,12 @@ public class Weapon : MonoBehaviour {
     }
 
     private IEnumerator Charge() {
-        laser.transform.localScale += Vector3.forward * 5f;
+        cooldownTimer = cooldown;
+        laser.transform.localScale += Vector3.forward * 15f;
         yield return new WaitForSeconds(2);
         shoot = false;
         laser.transform.localScale = new Vector3(0.1f,0.1f,0.1f);
         StopCoroutine("Charge");
-        cooldownTimer = cooldown;
     }
 
     private void ControlMode() {

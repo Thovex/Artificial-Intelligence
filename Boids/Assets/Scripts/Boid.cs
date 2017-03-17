@@ -9,16 +9,17 @@ public class Boid : MonoBehaviour {
     public float maxVelocity = 3f;
 
     public bool isHit = false;
+    public bool isShot = false;
 
     private GameObject center;
     private GameObject[] hideFrom;
 
     public GameObject run;
+    public GameObject deathObject;
 
     private Flock flock;
 
     private Rigidbody rb;
-
 
     private void Start() {
         center = GameObject.Find("CenterOfMass");
@@ -137,18 +138,27 @@ public class Boid : MonoBehaviour {
         }
 
         if (coll.tag == "Laser") {
-            GameObject t = Instantiate(run, transform.position, transform.rotation);
-            GameObject.Find("WeaponPivot").GetComponent<Weapon>().kills++;
-            Destroy(t, 10f);
-            if (gameObject != null) {
-                Destroy(gameObject);
-            }
+            GetHit();
         }
     }
 
     private void OnTriggerExit(Collider coll) {
         if (coll.tag == "HideFrom") {
             isHit = false;
+        }
+    }
+
+    public void GetHit() {
+        if (!isShot) {
+            isShot = true;
+            GameObject t = Instantiate(run, transform.position, transform.rotation);
+            GameObject.Find("WeaponPivot").GetComponent<Weapon>().kills++;
+            Destroy(t, 10f);
+            if (gameObject != null) {
+                GameObject t2 = Instantiate(deathObject, transform.position, transform.rotation);
+                Destroy(t2, 5f);
+                Destroy(gameObject);
+            }
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,6 +12,8 @@ public class Flock : MonoBehaviour {
     private GameObject center;
 
     public GameObject[] boids;
+
+    public TextMeshPro boidCounter;
 
     public Slider leftSlider;
     public Slider rightSlider;
@@ -29,5 +32,7 @@ public class Flock : MonoBehaviour {
     private void Update() {
         boids = GameObject.FindGameObjectsWithTag("Boid");
         center.transform.position = new Vector3(leftSlider.value + -rightSlider.value, upSlider.value + -downSlider.value, 0f);
+
+        boidCounter.text = boids.Length.ToString();
     }
 }

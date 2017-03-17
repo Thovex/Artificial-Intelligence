@@ -28,6 +28,8 @@ public class State_Order : State {
         agent = GetComponent<NavMeshAgent>();
         sf = GetComponent<State_FindState>();
 
+        origin = new Vector3(0, 1, 4);
+
         SetDefaultValues();
 
         int pickRandomTable = Random.Range(0, sf.readyToOrder.Count);
