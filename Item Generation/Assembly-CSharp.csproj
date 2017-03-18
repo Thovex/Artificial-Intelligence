@@ -46,10 +46,23 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\ArenaGenerator.cs" />
-     <Compile Include="Assets\MoveToClickPoint.cs" />
-     <Compile Include="Assets\ObjectToFloor.cs" />
+     <Compile Include="Assets\Scripts\AI\FSM.cs" />
+     <Compile Include="Assets\Scripts\AI\IState.cs" />
+     <Compile Include="Assets\Scripts\AI\State.cs" />
+     <Compile Include="Assets\Scripts\AI\States\AnimatorState\SetAttacking.cs" />
+     <Compile Include="Assets\Scripts\AI\States\AnimatorState\SetDefending.cs" />
+     <Compile Include="Assets\Scripts\AI\States\State_Attack.cs" />
+     <Compile Include="Assets\Scripts\AI\States\State_Defend.cs" />
+     <Compile Include="Assets\Scripts\AI\States\State_FindOpponent.cs" />
+     <Compile Include="Assets\Scripts\AI\States\State_FindState.cs" />
+     <Compile Include="Assets\Scripts\AI\States\State_Flee.cs" />
+     <Compile Include="Assets\Scripts\AI\States\State_MoveToOpponent.cs" />
+     <Compile Include="Assets\Scripts\Level\ArenaGenerator.cs" />
+     <Compile Include="Assets\Scripts\Level\FollowFight.cs" />
      <Compile Include="Assets\Scripts\Level\MapGenerator.cs" />
+     <Compile Include="Assets\Scripts\Level\MoveToClickPoint.cs" />
+     <Compile Include="Assets\Scripts\Level\ObjectToFloor.cs" />
+     <Compile Include="Assets\Scripts\Level\SetCullingModeFix.cs" />
      <Compile Include="Assets\Scripts\Swords\CreateSwords.cs" />
      <Compile Include="Assets\Scripts\Swords\MoveCamera.cs" />
      <Compile Include="Assets\Scripts\Swords\NameDatabase.cs" />
@@ -110,7 +123,7 @@
      <None Include="Assets\TextMesh Pro\Resources\LineBreaking Following Characters.txt" />
      <None Include="Assets\TextMesh Pro\Fonts\LiberationSans - OFL.txt" />
      <None Include="Assets\TextMesh Pro\Fonts\Bangers - OFL.txt" />
-     <None Include="Assets\VertexColorUnlit.shader" />
+     <None Include="Assets\Textures &amp; Materials\VertexColorUnlit.shader" />
  <Reference Include="UnityEngine.UI">
  <HintPath>D:/Game Development/Unity 5.5/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
  </Reference>

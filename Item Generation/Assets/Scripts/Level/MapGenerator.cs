@@ -1,7 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEditor.AI;
+using UnityEngine.UI;
 
 public class MapGenerator : MonoBehaviour {
 
@@ -12,11 +14,56 @@ public class MapGenerator : MonoBehaviour {
     Vector3[] mVerts;
     int mVertCount;
 
+    public GameObject arenaGenerator;
+
+    public GameObject ai01;
+    public GameObject ai02;
+
+    public float waitTime = 30f;
+    private float waitTimer;
+    public Text timer;
+
     private void Start () {
         CreateTerrain();
         gameObject.AddComponent<MeshCollider>();
         NavMeshBuilder.BuildNavMesh();
 
+        waitTimer = waitTime;
+        SetAIsActive();
+        Invoke("CreateArena", waitTime);
+
+    }
+
+    void SetAIsActive() {
+        ai01.SetActive(true);
+        ai02.SetActive(true);
+    }
+
+    void SetAIScriptsActive() {
+        ai01.GetComponent<NavMeshAgent>().enabled = true;
+        ai01.GetComponent<FSM>().enabled = true;
+        ai02.GetComponent<NavMeshAgent>().enabled = true;
+        ai02.GetComponent<FSM>().enabled = true;
+    }
+
+    void Update() {
+        if (waitTimer > 0) {
+            waitTimer -= Time.deltaTime;
+        }
+
+        timer.text = waitTimer.ToString("F0");
+    }
+
+    public void SetTime(float time) {
+        CancelInvoke("CreateArena");
+        CreateArena();
+        waitTimer = time;
+    }
+
+    void CreateArena() {
+        arenaGenerator.SetActive(true);
+        Invoke("SetAIScriptsActive", 2f);
+        GameObject.Find("BettingCanvas").SetActive(false);
     }
 
     void CreateTerrain() {

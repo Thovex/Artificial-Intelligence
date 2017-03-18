@@ -23,7 +23,7 @@ public class WeaponGenerationForGameplay : MonoBehaviour {
     private List<GameObject> part = new List<GameObject>();
     public List<string> materialTypes = new List<string>();
 
-    private void Start() {
+    private void Awake() {
         StartGeneratingSword();
 
         itemValue = meshValue + materialValue;
@@ -44,7 +44,7 @@ public class WeaponGenerationForGameplay : MonoBehaviour {
         itemDamage = itemValue * itemLength * itemDurability * itemWeight / 10000f;
 
         transform.parent = parentObj.transform;
-        transform.position = parentObj.transform.position;
+        transform.position = new Vector3(parentObj.transform.position.x, parentObj.transform.position.y + .5f, parentObj.transform.position.z);
     }
 
     private void SuperSpecificStuff() {
@@ -240,15 +240,16 @@ public class WeaponGenerationForGameplay : MonoBehaviour {
                 break;
             case 1: // Hilt Settings
                 obj.transform.localScale = new Vector3(obj.transform.localScale.x, obj.transform.localScale.y, obj.transform.localScale.z + Random.Range(-.5f, .5f));
+                obj.transform.position -= offset * 2.5f;
                 break;
             case 2: // Guard Settings
                 obj.transform.localScale = new Vector3(obj.transform.localScale.x + Random.Range(-.5f, .5f), obj.transform.localScale.y, obj.transform.localScale.z);
+                obj.transform.position -= offset * 2.5f;
                 break;
             case 3: // Sword Settings
-                obj.transform.position -= offset * 1.5f;
-
+                obj.transform.position -= offset * 2.5f;
                 obj.transform.localScale = new Vector3(obj.transform.localScale.x, obj.transform.localScale.y + Random.Range(-.5f, .5f), obj.transform.localScale.z);
-
+                obj.layer = 8;
                 if (Random.value < 0.5f) {
                     obj.transform.rotation = Quaternion.Euler(0, 180, 0);
                 }

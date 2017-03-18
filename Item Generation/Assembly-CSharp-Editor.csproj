@@ -46,11 +46,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\NavMeshComponents\Editor\NavMeshComponentsGUIUtility.cs" />
-     <Compile Include="Assets\NavMeshComponents\Editor\NavMeshLinkEditor.cs" />
-     <Compile Include="Assets\NavMeshComponents\Editor\NavMeshModifierEditor.cs" />
-     <Compile Include="Assets\NavMeshComponents\Editor\NavMeshModifierVolumeEditor.cs" />
-     <Compile Include="Assets\NavMeshComponents\Editor\NavMeshSurfaceEditor.cs" />
+     <Compile Include="Assets\RAIN\Editor\ScriptTemplates\ActionTemplate_CS.cs" />
+     <Compile Include="Assets\RAIN\Editor\ScriptTemplates\DecisionTemplate_CS.cs" />
      <None Include="Assets\TextMesh Pro\Resources\LineBreaking Leading Characters.txt" />
      <None Include="Assets\TextMesh Pro\Resources\Shaders\TMP_Bitmap-Mobile.shader" />
      <None Include="Assets\Resources\Words\Firsts.txt" />
@@ -58,6 +55,7 @@
      <None Include="Assets\TextMesh Pro\Resources\Shaders\TMPro_Surface.cginc" />
      <None Include="Assets\TextMesh Pro\Resources\Shaders\TMP_SDF-Surface.shader" />
      <None Include="Assets\TextMesh Pro\Resources\Shaders\TMP_SDF.shader" />
+     <None Include="Assets\RAIN\Editor\Shaders\RAINShader.shader" />
      <None Include="Assets\TextMesh Pro\Resources\Shaders\TMP_SDF-Mobile Overlay.shader" />
      <None Include="Assets\TextMesh Pro\Resources\Shaders\TMPro_Properties.cginc" />
      <None Include="Assets\Resources\Words\Seconds.txt" />
@@ -66,6 +64,7 @@
      <None Include="Assets\TextMesh Pro\Resources\Shaders\TMPro.cginc" />
      <None Include="Assets\TextMesh Pro\Fonts\Oswald-Bold - OFL.txt" />
      <None Include="Assets\TextMesh Pro\Resources\Shaders\TMP_SDF-Mobile Masking.shader" />
+     <None Include="Assets\RAIN\Editor\ScriptTemplates\BehaviorTreeTemplate.xml" />
      <None Include="Assets\TextMesh Pro\Resources\Shaders\TMP_Bitmap.shader" />
      <None Include="Assets\Resources\Words\Thirds.txt" />
      <None Include="Assets\TextMesh Pro\Resources\Shaders\TMP_Sprite.shader" />
@@ -73,7 +72,7 @@
      <None Include="Assets\TextMesh Pro\Resources\LineBreaking Following Characters.txt" />
      <None Include="Assets\TextMesh Pro\Fonts\LiberationSans - OFL.txt" />
      <None Include="Assets\TextMesh Pro\Fonts\Bangers - OFL.txt" />
-     <None Include="Assets\VertexColorUnlit.shader" />
+     <None Include="Assets\Textures &amp; Materials\VertexColorUnlit.shader" />
  <Reference Include="UnityEditor.Advertisements">
  <HintPath>D:/Game Development/Unity 5.5/Editor/Data/UnityExtensions/Unity/Advertisements/Editor/UnityEditor.Advertisements.dll</HintPath>
  </Reference>
