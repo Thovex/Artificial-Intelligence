@@ -6,7 +6,6 @@ using UnityEngine.AI;
 public class State_MoveToOpponent : State {
     private FSM fsm;
 
-
     public override void EnterState(FSM _fsm) {
         Debug.Log("Entered: " + this.GetType());
         fsm = _fsm;

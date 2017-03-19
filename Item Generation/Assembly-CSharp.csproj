@@ -60,9 +60,11 @@
      <Compile Include="Assets\Scripts\Level\ArenaGenerator.cs" />
      <Compile Include="Assets\Scripts\Level\FollowFight.cs" />
      <Compile Include="Assets\Scripts\Level\MapGenerator.cs" />
+     <Compile Include="Assets\Scripts\Level\MoneyManager.cs" />
      <Compile Include="Assets\Scripts\Level\MoveToClickPoint.cs" />
      <Compile Include="Assets\Scripts\Level\ObjectToFloor.cs" />
      <Compile Include="Assets\Scripts\Level\SetCullingModeFix.cs" />
+     <Compile Include="Assets\Scripts\Level\SetOnBtnClickValues.cs" />
      <Compile Include="Assets\Scripts\Swords\CreateSwords.cs" />
      <Compile Include="Assets\Scripts\Swords\MoveCamera.cs" />
      <Compile Include="Assets\Scripts\Swords\NameDatabase.cs" />

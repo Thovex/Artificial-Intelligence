@@ -28,8 +28,6 @@ public class SwordDatabase : MonoBehaviour {
     public List<ItemMaterial> itemMaterials = new List<ItemMaterial>();
     public List<GameObject> itemParticles = new List<GameObject>();
     public List<GameObject> itemLights = new List<GameObject>();
-
-    //To optimize ;D
     public List<Material> itemSpecificMaterials = new List<Material>();
 
     private static SwordDatabase instance = null;

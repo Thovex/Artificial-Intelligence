@@ -14,7 +14,7 @@ public class CreateSwords : MonoBehaviour {
     public List<GameObject> swordGenObjects = new List<GameObject>();
     public List<float> values = new List<float>();
 
-    void Start () {
+    private void Start () {
 	    for (int i = 0; i < 100; i++) {
             GameObject temp = Instantiate(swordGen, Vector3.zero, Quaternion.identity);
             temp.name = "SwordGen_" + i;
@@ -24,7 +24,7 @@ public class CreateSwords : MonoBehaviour {
         Invoke("UpdatePositions", 1f);
     }
 
-    void UpdatePositions() {
+    private void UpdatePositions() {
         foreach (GameObject g in swordGenObjects) {
             string[] tempStringArray = g.name.Split('_');
             int pos = int.Parse(tempStringArray[1]);
@@ -43,7 +43,7 @@ public class CreateSwords : MonoBehaviour {
         GetValue(true);
     }
 
-    void GetValue(bool highest) {
+    private void GetValue(bool highest) {
         string opOne = values[0].ToString();
         for (int i = 0; i < swordGenObjects.Count; i++) {
             if (opOne == swordGenObjects[i].name) {

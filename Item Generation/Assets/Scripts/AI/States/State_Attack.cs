@@ -12,7 +12,6 @@ public class State_Attack : State {
         fsm.anim.SetTrigger("Attack");
 
         Invoke("ExitState", 2f);
-
     }
 
     public override void UpdateState() {

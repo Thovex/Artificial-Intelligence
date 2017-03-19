@@ -1,15 +1,14 @@
-﻿// MoveToClickPoint.cs
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.AI;
 
 public class MoveToClickPoint : MonoBehaviour {
-    NavMeshAgent agent;
+    private NavMeshAgent agent;
 
-    void Start() {
+    private void Start() {
         agent = GetComponent<NavMeshAgent>();
     }
 
-    void Update() {
+    private void Update() {
         if (Input.GetMouseButtonDown(0)) {
             RaycastHit hit;
 

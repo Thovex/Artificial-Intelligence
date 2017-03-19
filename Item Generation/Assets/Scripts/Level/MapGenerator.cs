@@ -7,12 +7,14 @@ using UnityEngine.UI;
 
 public class MapGenerator : MonoBehaviour {
 
-    public int mDivisions;
-    public float mSize;
-    public float mHeight;
+    public int worldDivisions;
+    public float worldSize;
+    public float worldHeight;
 
-    Vector3[] mVerts;
-    int mVertCount;
+    private Vector3[] worldVerts;
+    private Vector2[] uvs;
+    private int[] tris;
+    private int worldVertCount;
 
     public GameObject arenaGenerator;
 
@@ -23,35 +25,145 @@ public class MapGenerator : MonoBehaviour {
     private float waitTimer;
     public Text timer;
 
-    private void Start () {
+    private void Start() {
         CreateTerrain();
-        gameObject.AddComponent<MeshCollider>();
         NavMeshBuilder.BuildNavMesh();
 
         waitTimer = waitTime;
         SetAIsActive();
         Invoke("CreateArena", waitTime);
-
     }
 
-    void SetAIsActive() {
+    private void Update() {
+        if (waitTimer > 0) {
+            waitTimer -= Time.deltaTime;
+        }
+        timer.text = waitTimer.ToString("F0");
+    }
+
+    private void CreateTerrain() {
+        GetVertexCount();
+        InitVertexArrays();
+        CalculateVertsUvsTris();
+        SetEdgeVerts();
+        PerformDiamondSquare();
+        SetMesh(CreateMesh());
+    }
+
+    private void GetVertexCount() {
+        worldVertCount = (worldDivisions + 1) * (worldDivisions + 1);
+    }
+
+    private void InitVertexArrays() {
+        worldVerts = new Vector3[worldVertCount];
+        uvs = new Vector2[worldVertCount];
+        tris = new int[worldDivisions * worldDivisions * 6];
+    }
+
+    private void CalculateVertsUvsTris() {
+        float halfSize = worldSize * 0.5f;
+        float divisionSize = worldSize / worldDivisions;
+
+        int triOffset = 0;
+
+        for (int i = 0; i <= worldDivisions; i++) {
+            for (int j = 0; j <= worldDivisions; j++) {
+                worldVerts[i * (worldDivisions + 1) + j] = new Vector3(-halfSize + j * divisionSize, 0.0f, halfSize - i * divisionSize);
+                uvs[i * (worldDivisions + 1) + j] = new Vector2((float)i / worldDivisions, (float)j / worldDivisions);
+                if (i < worldDivisions && j < worldDivisions) {
+                    int topLeft = i * (worldDivisions + 1) + j;
+                    int botLeft = (i + 1) * (worldDivisions + 1) + j;
+                    SetTris(triOffset, topLeft, botLeft);
+                    triOffset += 6;
+                }
+            }
+        }
+    }
+
+    private void SetTris(int triOffset, int topLeft, int botLeft) {
+        tris[triOffset] = topLeft;
+        tris[triOffset + 1] = topLeft + 1;
+        tris[triOffset + 2] = botLeft + 1;
+        tris[triOffset + 3] = topLeft;
+        tris[triOffset + 4] = botLeft + 1;
+        tris[triOffset + 5] = botLeft;
+    }
+
+    private void SetEdgeVerts() {
+        worldVerts[0].y = Random.Range(-worldHeight, worldHeight);
+        worldVerts[worldDivisions + 1].y = Random.Range(-worldHeight, worldHeight);
+        worldVerts[worldVerts.Length - 1].y = Random.Range(-worldHeight, worldHeight);
+        worldVerts[worldVerts.Length - 1 - worldDivisions].y = Random.Range(-worldHeight, worldHeight);
+    }
+
+    private void PerformDiamondSquare() {
+        int iterations = (int)Mathf.Log(worldDivisions, 2);
+        int numSquares = 1;
+        int squareSize = worldDivisions;
+
+        for (int i = 0; i < iterations; i++) {
+            int row = 0;
+            for (int j = 0; j < numSquares; j++) {
+                int col = 0;
+                for (int k = 0; k < numSquares; k++) {
+                    PerformDiamond(row, col, squareSize, worldHeight);
+                    col += squareSize;
+                }
+                row += squareSize;
+            }
+            numSquares *= 2;
+            squareSize /= 2;
+            worldHeight *= 0.5f;
+        }
+    }
+
+    private void PerformDiamond(int row, int col, int size, float offset) {
+        int halfSize = (int)(size * 0.5f);
+        int topLeft = row * (worldDivisions + 1) + col;
+        int botLeft = (row + size) * (worldDivisions + 1) + col;
+
+        int mid = (row + halfSize) * (worldDivisions + 1) + col + halfSize;
+        worldVerts[mid].y = (worldVerts[topLeft].y + worldVerts[topLeft + size].y + worldVerts[botLeft].y + worldVerts[botLeft + size].y) * .25f + Random.Range(-offset, offset);
+
+        worldVerts[topLeft + halfSize].y = (worldVerts[topLeft].y + worldVerts[topLeft + size].y + worldVerts[mid].y) / 3 + Random.Range(-offset, offset);
+        worldVerts[mid - halfSize].y = (worldVerts[topLeft].y + worldVerts[botLeft].y + worldVerts[mid].y) / 3 + Random.Range(-offset, offset);
+        worldVerts[mid + halfSize].y = (worldVerts[topLeft + size].y + worldVerts[botLeft + size].y + worldVerts[mid].y) / 3 + Random.Range(-offset, offset);
+        worldVerts[botLeft + halfSize].y = (worldVerts[botLeft].y + worldVerts[botLeft + size].y + worldVerts[mid].y) / 3 + Random.Range(-offset, offset);
+    }
+
+    private Mesh CreateMesh() {
+        Mesh mesh = new Mesh();
+        return GetComponent<MeshFilter>().mesh = mesh;
+    }
+
+    private void SetMesh(Mesh mesh) {
+        mesh.vertices = worldVerts;
+        mesh.uv = uvs;
+        mesh.triangles = tris;
+
+        mesh.RecalculateBounds();
+        mesh.RecalculateNormals();
+
+        gameObject.AddComponent<MeshCollider>();
+    }
+
+
+    private void SetAIsActive() {
         ai01.SetActive(true);
         ai02.SetActive(true);
     }
 
-    void SetAIScriptsActive() {
+    private void CreateArena() {
+        arenaGenerator.SetActive(true);
+        Invoke("SetAIScriptsActive", 2f);
+        GameObject.Find("BettingCanvas").SetActive(false);
+    }
+
+    private void SetAIScriptsActive() {
         ai01.GetComponent<NavMeshAgent>().enabled = true;
         ai01.GetComponent<FSM>().enabled = true;
         ai02.GetComponent<NavMeshAgent>().enabled = true;
         ai02.GetComponent<FSM>().enabled = true;
-    }
-
-    void Update() {
-        if (waitTimer > 0) {
-            waitTimer -= Time.deltaTime;
-        }
-
-        timer.text = waitTimer.ToString("F0");
     }
 
     public void SetTime(float time) {
@@ -60,103 +172,11 @@ public class MapGenerator : MonoBehaviour {
         waitTimer = time;
     }
 
-    void CreateArena() {
-        arenaGenerator.SetActive(true);
-        Invoke("SetAIScriptsActive", 2f);
-        GameObject.Find("BettingCanvas").SetActive(false);
-    }
-
-    void CreateTerrain() {
-        mVertCount = (mDivisions + 1) * (mDivisions + 1);
-        mVerts = new Vector3[mVertCount];
-        Vector2[] uvs = new Vector2[mVertCount];
-        int[] tris = new int[mDivisions * mDivisions * 6];
-
-        float halfSize = mSize * 0.5f;
-        float divisionSize = mSize / mDivisions;
-
-        Mesh mesh = new Mesh();
-
-        GetComponent<MeshFilter>().mesh = mesh;
-
-        int triOffset = 0;
-
-        for (int i = 0; i <= mDivisions; i++) {
-            for (int j = 0; j <= mDivisions; j++) {
-                mVerts[i * (mDivisions + 1) + j] = new Vector3(-halfSize + j * divisionSize, 0.0f, halfSize - i * divisionSize);
-                uvs[i * (mDivisions + 1) + j] = new Vector2((float)i / mDivisions, (float)j / mDivisions);
-                if (i < mDivisions && j < mDivisions) {
-
-                    int topLeft = i * (mDivisions + 1) + j;
-                    int botLeft = (i + 1) * (mDivisions + 1) + j;
-
-                    tris[triOffset] = topLeft;
-                    tris[triOffset + 1] = topLeft + 1;
-                    tris[triOffset + 2] = botLeft + 1;
-
-                    tris[triOffset + 3] = topLeft;
-                    tris[triOffset + 4] = botLeft + 1;
-                    tris[triOffset + 5] = botLeft;
-
-                    triOffset += 6;
-                }
-            }
-        }
-
-        mVerts[0].y = Random.Range(-mHeight, mHeight);
-        mVerts[mDivisions + 1].y = Random.Range(-mHeight, mHeight);
-        mVerts[mVerts.Length - 1].y = Random.Range(-mHeight, mHeight);
-        mVerts[mVerts.Length - 1 - mDivisions].y = Random.Range(-mHeight, mHeight);
-
-        int iterations = (int)Mathf.Log(mDivisions, 2);
-        int numSquares = 1;
-        int squareSize = mDivisions;
-
-        for (int i = 0; i < iterations; i++) {
-            int row = 0;
-            for (int j = 0; j < numSquares; j++) {
-
-                int col = 0;
-                for (int k = 0; k < numSquares; k++) {
-
-                    DiamondSquare(row, col, squareSize, mHeight);
-                    col += squareSize;
-
-                }
-                row += squareSize;
-            }
-            numSquares *= 2;
-            squareSize /= 2;
-            mHeight *= 0.5f;
-        }
-
-        Color[] colors = new Color[mesh.vertices.Length];
-        for (int i = 0; i < mesh.vertices.Length; i++) {
-            colors[i] = Color.red;
-        }
-        mesh.colors = colors;
 
 
-        mesh.vertices = mVerts;
-        mesh.uv = uvs;
-        mesh.triangles = tris;
 
-        mesh.RecalculateBounds();
-        mesh.RecalculateNormals();
 
-    }
 
-    void DiamondSquare(int row, int col, int size, float offset) {
-        int halfSize = (int)(size * 0.5f);
-        int topLeft = row * (mDivisions + 1) + col;
-        int botLeft = (row + size) * (mDivisions + 1) + col;
 
-        int mid = (int)(row + halfSize) * (mDivisions + 1) + (int)(col + halfSize);
-        mVerts[mid].y = (mVerts[topLeft].y + mVerts[topLeft + size].y + mVerts[botLeft].y + mVerts[botLeft + size].y) * .25f + Random.Range(-offset, offset);
 
-        mVerts[topLeft + halfSize].y = (mVerts[topLeft].y + mVerts[topLeft + size].y + mVerts[mid].y) / 3 + Random.Range(-offset, offset);
-        mVerts[mid - halfSize].y = (mVerts[topLeft].y + mVerts[botLeft].y + mVerts[mid].y) / 3 + Random.Range(-offset, offset);
-        mVerts[mid + halfSize].y = (mVerts[topLeft + size].y + mVerts[botLeft + size].y + mVerts[mid].y) / 3 + Random.Range(-offset, offset);
-        mVerts[botLeft + halfSize].y = (mVerts[botLeft].y + mVerts[botLeft + size].y + mVerts[mid].y) / 3 + Random.Range(-offset, offset);
-    }
 }

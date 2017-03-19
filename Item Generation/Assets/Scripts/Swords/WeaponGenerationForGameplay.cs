@@ -43,6 +43,11 @@ public class WeaponGenerationForGameplay : MonoBehaviour {
 
         itemDamage = itemValue * itemLength * itemDurability * itemWeight / 10000f;
 
+        Invoke("SetParent", 1f);
+
+    }
+
+    private void SetParent() {
         transform.parent = parentObj.transform;
         transform.position = new Vector3(parentObj.transform.position.x, parentObj.transform.position.y + .5f, parentObj.transform.position.z);
     }

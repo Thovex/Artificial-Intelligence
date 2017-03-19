@@ -7,16 +7,15 @@ public class State_FindState: State {
 
     private float timeInFind;
 
-    private float timeTillRandomAttack;
+    private float timeTillRandomAction;
 
     public override void EnterState(FSM _fsm) {
         Debug.Log("Entered: " + this.GetType());
         fsm = _fsm;
 
-        timeTillRandomAttack = Random.Range(2f, 4f);
+        timeTillRandomAction = Random.Range(1f, 3f);
         timeInFind = 0f;
 
-        // Have I found any enemies?
         if (fsm.opponents.Count == 0) {
             Debug.Log("Exitting: " + this.GetType());
             fsm.SwitchState("FindOpponent");
@@ -50,11 +49,13 @@ public class State_FindState: State {
                 }
             }
 
-
-            // Do a random attack?
-            if (timeInFind > timeTillRandomAttack) {
-                fsm.SwitchState("Attack");
-
+            if (timeInFind > timeTillRandomAction) {
+                if (Random.value < .3f) {
+                    fsm.SwitchState("Flee");
+                }
+                else {
+                    fsm.SwitchState("Attack");
+                }
             }
         }
     }

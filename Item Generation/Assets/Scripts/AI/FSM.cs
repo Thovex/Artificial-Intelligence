@@ -4,8 +4,6 @@ using UnityEngine;
 using UnityEngine.AI;
 
 public class FSM : MonoBehaviour {
-
-
     public float health;
     public float maxHealth;
     public float meleeRange;
@@ -20,35 +18,27 @@ public class FSM : MonoBehaviour {
     public bool isDefending = false;
     public bool isAttacking = false;
 
-    public State currentState;
-    public State[] states;
+    public GameObject currentTarget;
+
+    public List<GameObject> opponents = new List<GameObject>();
     public Dictionary<string, State> fsmStates;
 
     public NavMeshAgent agent;
+    public Animator anim;
+    public WeaponGenerationForGameplay weaponStats;
+
+    public State currentState;
+    public State[] states;
 
     private Rigidbody rigidBody;
 
-    public Animator anim;
-
-    public WeaponGenerationForGameplay weaponStats;
-
-    public GameObject currentTarget;
-    public List<GameObject> opponents = new List<GameObject>();
-
     private void Start () {
-        agent = GetComponent<NavMeshAgent>();
-        anim = GetComponent<Animator>();
-        rigidBody = GetComponent<Rigidbody>();
-        weaponStats = transform.GetChild(0).GetComponent<WeaponGenerationForGameplay>();
+        GetComponents();
+
         fsmStates = new Dictionary<string, State>();
 
+        GetStates();
         SetStats();
-
-        states = GetComponents<State>();
-
-        foreach (State state in states) {
-            fsmStates.Add(state.stateName, state);
-        }
 
         State idle = null;
         if (fsmStates.TryGetValue("Idle", out idle)) {
@@ -56,6 +46,20 @@ public class FSM : MonoBehaviour {
             currentState.EnterState(this);
         }
 
+    }
+
+    private void GetStates() {
+        foreach (State state in states) {
+            fsmStates.Add(state.stateName, state);
+        }
+    }
+
+    private void GetComponents() {
+        agent = GetComponent<NavMeshAgent>();
+        anim = GetComponent<Animator>();
+        rigidBody = GetComponent<Rigidbody>();
+        weaponStats = transform.GetChild(0).GetComponent<WeaponGenerationForGameplay>();
+        states = GetComponents<State>();
     }
 
     private void SetStats() {
@@ -80,45 +84,7 @@ public class FSM : MonoBehaviour {
         }
 
         if (health <= 0) {
-            for (int i = 0; i < states.Length; i++) {
-                Destroy(states[i]);
-                Destroy(weaponStats);
-
-                List<GameObject> childrenObjects = new List<GameObject>();
-
-                Component[] children;
-                children = GetComponentsInChildren(typeof(Transform));
-
-                foreach (Component c in children) {
-                    if (c.gameObject != this.gameObject) {
-                        if (c.gameObject != this.gameObject.transform.GetChild(0).gameObject) {
-                            childrenObjects.Add(c.gameObject);
-                        }
-                    }
-                }
-
-                foreach (GameObject g in childrenObjects) {
-                    Debug.Log(g);
-                    g.AddComponent<Rigidbody>();
-                    g.transform.parent = null;
-
-                    Mesh m = g.GetComponent<MeshFilter>().mesh;
-                    Vector3[] oldVertices = m.vertices;
-                    Vector3[] newVertices = new Vector3[oldVertices.Length];
-
-                    for (int k = 0; k < oldVertices.Length; k++) {
-                        newVertices[k] = new Vector3(oldVertices[k].x + Random.Range(-.1f, .1f), oldVertices[k].y + Random.Range(-.1f, .1f), oldVertices[k].z + Random.Range(-.1f, .1f));
-                    }
-
-                    m.vertices = newVertices;
-                    g.layer = 0;
-                    g.GetComponent<Rigidbody>().mass = weaponStats.itemWeight;
-                }
-
-                transform.DetachChildren();
-
-                Destroy(gameObject);
-            }
+            KillAgent();
         }
 
     }
@@ -144,6 +110,51 @@ public class FSM : MonoBehaviour {
         Vector3 direction = (target.position - transform.position).normalized;
         Quaternion lookRotation = Quaternion.LookRotation(direction);
         transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * rotationSpeed);
+    }
+
+    private void KillAgent() {
+        for (int i = 0; i < states.Length; i++) {
+            Destroy(states[i]);
+            Destroy(weaponStats);
+
+            List<GameObject> childrenObjects = new List<GameObject>();
+
+            Component[] children;
+            children = GetComponentsInChildren(typeof(Transform));
+
+            foreach (Component c in children) {
+                if (c.gameObject != this.gameObject) {
+                    if (c.gameObject != this.gameObject.transform.GetChild(0).gameObject) {
+                        childrenObjects.Add(c.gameObject);
+                    }
+                }
+            }
+
+            foreach (GameObject g in childrenObjects) {
+                AdjustMeshVertices(g);
+            }
+
+            transform.DetachChildren();
+
+            Destroy(gameObject);
+        }
+    }
+
+    private void AdjustMeshVertices(GameObject g) {
+        g.AddComponent<Rigidbody>();
+        g.transform.parent = null;
+
+        Mesh m = g.GetComponent<MeshFilter>().mesh;
+        Vector3[] oldVertices = m.vertices;
+        Vector3[] newVertices = new Vector3[oldVertices.Length];
+
+        for (int k = 0; k < oldVertices.Length; k++) {
+            newVertices[k] = new Vector3(oldVertices[k].x + Random.Range(-.1f, .1f), oldVertices[k].y + Random.Range(-.1f, .1f), oldVertices[k].z + Random.Range(-.1f, .1f));
+        }
+
+        m.vertices = newVertices;
+        g.layer = 0;
+        g.GetComponent<Rigidbody>().mass = weaponStats.itemWeight;
     }
 
     private void OnCollisionEnter(Collision coll) {

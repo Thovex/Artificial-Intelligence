@@ -55,12 +55,15 @@ public class NameDatabase : MonoBehaviour {
                 name = firstsLines[Random.Range(0, firstsLines.Count - 1)] + " " + secondsLines[Random.Range(0, secondsLines.Count - 1)] + " " + thirdsLines[Random.Range(0, thirdsLines.Count - 1)];
         }
 
-
         name = System.Text.RegularExpressions.Regex.Replace(name, "[^\\w\\._ ']", "");
 
         return name;
     }
 
+    /* Kots een awful naam uit fayshifayshifayshifayshifayshifayshifayshifayshifayshifayshifayshifayshifayshifayshifayshifayshifayshi
+    * fayshifayshifayshifayshifayshifayshifayshifayshifayshifayshifayshifayshifayshifayshifayshifayshifayshifayshifayshifayshifayshifay
+    * shifayshifayshifayshifayshifayshifayshifayshifayshifayshifayshifayshifayshifayshifayshifayshifayshifayshifayshifayshifayshifayshi
+    */
     public string GenerateShittyName() {
         List<string> firstNameSyllables = new List<string>();
 

@@ -9,11 +9,9 @@ public class ArenaGenerator : MonoBehaviour {
     public GameObject wall;
     public GameObject gate;
 
-    public GameObject ai01;
-    public GameObject ai02;
+    private GameObject[] ai = new GameObject[2];
 
-    public Vector3 spawnPos1;
-    public Vector3 spawnPos2;
+    private Vector3[] spawnPos = new Vector3[2];
 
     public Vector2 arenaSize;
 
@@ -21,8 +19,7 @@ public class ArenaGenerator : MonoBehaviour {
     public float sTower;
     public float sGate;
 
-    private GameObject gate1;
-    private GameObject gate2;
+    private GameObject[] gates = new GameObject[2];
 
     void Start () {
         arenaSize = new Vector2(Random.Range(2, 6), Random.Range(2, 6));
@@ -33,17 +30,22 @@ public class ArenaGenerator : MonoBehaviour {
 	}
 
     void SetAISpawn() {
-        spawnPos1 = new Vector3(transform.position.x - 15f, gate1.transform.position.y, transform.position.z + (Mathf.FloorToInt(arenaSize.x / 2) * sWall));
-        spawnPos2 = new Vector3(transform.position.x - (arenaSize.y * sWall + sTower) + 15f, gate2.transform.position.y, transform.position.z + (Mathf.FloorToInt(arenaSize.x / 2) * sWall));
+        ai = GameObject.FindGameObjectsWithTag("ArtificialIntelligence");
 
-        ai01.GetComponent<NavMeshAgent>().enabled = false;
-        ai02.GetComponent<NavMeshAgent>().enabled = false;
+        spawnPos[0] = new Vector3(transform.position.x - 15f, gates[0].transform.position.y, transform.position.z + (Mathf.FloorToInt(arenaSize.x / 2) * sWall));
+        spawnPos[1] = new Vector3(transform.position.x - (arenaSize.y * sWall + sTower) + 15f, gates[1].transform.position.y, transform.position.z + (Mathf.FloorToInt(arenaSize.x / 2) * sWall));
 
-        ai01.transform.position = spawnPos1;
-        ai02.transform.position = spawnPos2;
+        ai[0].GetComponent<NavMeshAgent>().enabled = false;
+        ai[1].GetComponent<NavMeshAgent>().enabled = false;
 
-        ai01.GetComponent<NavMeshAgent>().enabled = true;
-        ai02.GetComponent<NavMeshAgent>().enabled = true;
+        Debug.Log(spawnPos[0]);
+        Debug.Log(spawnPos[1]);
+
+        ai[0].transform.position = spawnPos[0];
+        ai[1].transform.position = spawnPos[1];
+
+        ai[0].GetComponent<NavMeshAgent>().enabled = true;
+        ai[1].GetComponent<NavMeshAgent>().enabled = true;
     }
 	
 	void CreateBase () {
@@ -51,8 +53,8 @@ public class ArenaGenerator : MonoBehaviour {
         for (int i = 0; i < arenaSize.x; i++) {
             if (i == Mathf.FloorToInt(arenaSize.x / 2)) {
 
-                gate1 = Instantiate(gate, new Vector3(transform.position.x, transform.position.y, transform.position.z + (i * sWall)), transform.rotation, transform);
-                gate2 = Instantiate(gate, new Vector3(transform.position.x - (arenaSize.y * sWall + sTower), transform.position.y, transform.position.z + (i * sWall)), Quaternion.Euler(new Vector3(transform.rotation.x, transform.rotation.y - 180f, transform.rotation.z)),transform);
+                gates[0] = Instantiate(gate, new Vector3(transform.position.x, transform.position.y, transform.position.z + (i * sWall)), transform.rotation, transform);
+                gates[1] = Instantiate(gate, new Vector3(transform.position.x - (arenaSize.y * sWall + sTower), transform.position.y, transform.position.z + (i * sWall)), Quaternion.Euler(new Vector3(transform.rotation.x, transform.rotation.y - 180f, transform.rotation.z)),transform);
 
             }
             else {
@@ -80,6 +82,8 @@ public class ArenaGenerator : MonoBehaviour {
             }
         }
     }
+
+    // Find fix for this?
     private void GetModelSizes() {
         GameObject _wall = Instantiate(wall, transform.position, transform.rotation);
         GameObject _tower = Instantiate(tower, transform.position, transform.rotation);

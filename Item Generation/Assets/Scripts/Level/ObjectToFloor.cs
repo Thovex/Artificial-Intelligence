@@ -16,24 +16,16 @@ public class ObjectToFloor : MonoBehaviour {
     public Vector3 hitFrontRight;
     public Vector3 hitFrontLeft;
 
-    void Start() {
+    private void Start() {
         Invoke("AdjustPositionToGround", 1f);
-
     }
 
-    void AdjustPositionToGround() {
-
+    private void AdjustPositionToGround() {
         RaycastHit rayHitBackRight;
         RaycastHit rayHitBackLeft;
         RaycastHit rayHitFrontLeft;
         RaycastHit rayHitFrontRight;
         RaycastHit rayHitMiddle;
-
-        Debug.DrawRay(backRight.transform.position, Vector3.down);
-        Debug.DrawRay(backLeft.transform.position, Vector3.down);
-        Debug.DrawRay(frontLeft.transform.position, Vector3.down);
-        Debug.DrawRay(frontRight.transform.position, Vector3.down);
-        Debug.DrawRay(transform.position, Vector3.down);
 
         Ray rayBackRight = new Ray(backRight.transform.position, Vector3.down);
         Ray rayBackLeft = new Ray(backLeft.transform.position, Vector3.down);
@@ -79,7 +71,5 @@ public class ObjectToFloor : MonoBehaviour {
             transform.position = rayHitMiddle.point;
             Destroy(this);
         }
-
-
     }
 }
