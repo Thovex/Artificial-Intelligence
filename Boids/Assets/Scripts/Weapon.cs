@@ -44,11 +44,13 @@ public class Weapon : MonoBehaviour {
         var mousePos = Input.mousePosition;
         transform.LookAt(Camera.main.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y, zDistance)));
 
-        if (Input.GetMouseButtonDown(0)) {
-            if (!cd) {
-                ac.PlayOneShot(pew);
-                anim.SetTrigger("Zap");
-                shoot = true;
+        if (!controlModeOn) {
+            if (Input.GetMouseButtonDown(0)) {
+                if (!cd) {
+                    ac.PlayOneShot(pew);
+                    anim.SetTrigger("Zap");
+                    shoot = true;
+                }
             }
         }
 
